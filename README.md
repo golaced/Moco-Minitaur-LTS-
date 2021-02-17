@@ -1,4 +1,4 @@
-# Moco-ML
+# Moco-Minitaur LTS 高性能 开源 力控 四足机器人 平台
 本项目为开源桌面级8自由度四足机器人的相关资料，知乎教程文档：https://www.zhihu.com/column/c_1090923972006240256 </div>
 
 教程1：Moco-ML项目介绍https://zhuanlan.zhihu.com/p/347235537</div>
