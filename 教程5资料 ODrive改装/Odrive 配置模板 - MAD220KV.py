@@ -17,20 +17,20 @@ import sys
 #-------------参数配置-------------
 reset_all= 1 #擦除参数
 en_index= False #使用索引
-fast_per_cal = True #快速上电标定 跳过电机FOC环系数标定
+fast_per_cal = True #快速上电标定
 en_brake_resistance= 0#使用功率电阻
 
-gain_all = 0.1 #无命令下的位置闭环
+gain_all = 0.15 #无命令下的位置闭环
 
 gear_ratio = 1 #位置控制的减速比
 
 pole = 14  #极对数
-max_a= 38  #最大电流
-r_max_a= 60 #最大电流采样
+max_a= 25  #最大电流
+r_max_a= 30 #最大电流采样
 max_v= 36  #保护电压
 
 cpr_all= 16384 #编码器CPR
-calib_range = 0.15#标定误差冗余0.019999999552965164*10
+calib_range = 0.15#标定误差冗余0.019999999552965164*10 RAD
 
 vel_limit = 50000#turn/s 转速保护
 
@@ -160,7 +160,6 @@ def init_odrive(odrv):
     # odrv.axis1.config.calibration_lockin.ramp_distance = 3.1415927410125732
     # odrv.axis1.config.calibration_lockin.accel = 20
     # odrv.axis1.config.calibration_lockin.vel = 40
-
     odrv.axis0.controller.config.gear_ratio = gear_ratio
     odrv.axis1.controller.config.gear_ratio = gear_ratio
     
@@ -171,7 +170,7 @@ def init_odrive(odrv):
     odrv.axis1.motor.config.pre_calibrated = fast_per_cal
 
     odrv.axis0.encoder.config.pre_calibrated = True #HALL 传感器下直接跳过标定 使用存储偏差 
-    odrv.axis1.encoder.config.pre_calibrated = True #HALL 传感器下直接跳过标定 使用存储偏差   
+    odrv.axis1.encoder.config.pre_calibrated = True #HALL 传感器下直接跳过标定 使用存储偏差 
     print('Done!!!!!!!!!!!!!!!!!!!!')
 
 def set_odrive_limits(odrv,axis,cur_lim):
@@ -275,7 +274,7 @@ def bare_bones_calibration(app_shutdown_token, reset=True):
     """
     Just calibrate motors and basic gains
     """
-    print("Run doghome!!!!!!!!!!!!!!!!!!!\n ")# odrv0.axis0.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH   odrv0.axis0.encoder.index_found
+    print("Run doghome Cal!!!!!\n ")# odrv0.axis0.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH   odrv0.axis0.encoder.index_found
     odrv0 = get_odrive(app_shutdown_token)
     if reset_all :
         reset_odrive(odrv0)
@@ -287,14 +286,14 @@ def bare_bones_calibration(app_shutdown_token, reset=True):
     calibrate_motor(odrv0, odrv0.axis0)
     calibrate_motor(odrv0, odrv0.axis1)
 
-    odrv0.axis0.config.startup_encoder_offset_calibration = True
+    odrv0.axis0.config.startup_encoder_offset_calibration = True #自动上电标定偏差
     odrv0.axis1.config.startup_encoder_offset_calibration = True
-    odrv0.axis0.config.startup_closed_loop_control = True
+    odrv0.axis0.config.startup_closed_loop_control = True #自动进入闭环控制
     odrv0.axis1.config.startup_closed_loop_control = True
 
     odrv0.axis0.encoder.config.use_index = en_index
     odrv0.axis1.encoder.config.use_index = en_index
-    odrv0.axis0.encoder.config.calib_range =  calib_range
+    odrv0.axis0.encoder.config.calib_range =  calib_range 
     odrv0.axis1.encoder.config.calib_range =  calib_range
     odrv0.axis0.config.startup_encoder_index_search =en_index
     odrv0.axis1.config.startup_encoder_index_search =en_index
